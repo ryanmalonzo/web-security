@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 
 const app = express();
 app.use(express.json());
@@ -11,23 +11,23 @@ async function main() {
   const db = client.db();
 
   // Vulnerable endpoint
-  app.get("/search", async (req, res) => {
-    let q = req.query.user;
+  app.get("/reviews", async (req, res) => {
+    let q = req.query.id;
     try {
       q = JSON.parse(q);
-      const users = await db.collection("users").find(q).toArray();
-      res.json(users);
+      const reviews = await db.collection("reviews").find(q).toArray();
+      res.json(reviews);
     } catch (e) {
-      const users = await db.collection("users").find({ username: q }).toArray();
-      res.json(users);
+      const reviews = await db.collection("reviews").find({ _id: new ObjectId(q) }).toArray();
+      res.json(reviews);
     }
   });
 
   // Secure endpoint
-  app.get("/search/safe", async (req, res) => {
-    const username = req.query.user;
-    const users = await db.collection("users").find({ username }).toArray();
-    res.json(users);
+  app.get("/reviews/safe", async (req, res) => {
+    const reviewId = req.query.id;
+    const reviews = await db.collection("reviews").find({ _id: new ObjectId(reviewId) }).toArray();
+    res.json(reviews);
   });
 
   app.listen(3000, () => console.log("Listening on port 3000"));
