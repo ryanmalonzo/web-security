@@ -1,6 +1,6 @@
 services:
   caddy:
-    image: caddy:2
+    image: ghcr.io/caddybuilds/caddy-cloudflare:latest
     ports:
       - "80:80"
       - "443:443"
@@ -9,6 +9,8 @@ services:
       - $PWD/Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
+    environment:
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
     cap_add:
       - NET_ADMIN
     restart: unless-stopped

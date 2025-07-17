@@ -1,3 +1,10 @@
+(web) {
+  tls {
+    dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+  }
+}
+
 web-security.freehunt.fr {
+  import web
   reverse_proxy app:3000
 }
