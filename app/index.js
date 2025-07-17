@@ -30,6 +30,23 @@ async function main() {
     res.json(reviews);
   });
 
+  // Completely secure endpoint - no error leakage
+  app.get("/reviews/safe/v2", async (req, res) => {
+    const reviewId = req.query.id;
+    
+    // Validate that id is a valid ObjectId string
+    if (!reviewId || typeof reviewId !== 'string' || !ObjectId.isValid(reviewId)) {
+      return res.json([]);
+    }
+    
+    try {
+      const reviews = await db.collection("reviews").find({ _id: new ObjectId(reviewId) }).toArray();
+      res.json(reviews);
+    } catch (e) {
+      res.json([]);
+    }
+  });
+
   app.listen(3000, () => console.log("Listening on port 3000"));
 }
 
